@@ -32,16 +32,12 @@ mounts:
 hooks:
     build: |
         set -ex
-        # Création des dossiers locaux (dev)
         mkdir -p storage/framework/{cache,sessions,views}
         mkdir -p storage/app/public
         mkdir -p bootstrap/cache
-
-        # Permissions
         chmod -R 775 storage bootstrap/cache
-        chown -R $PLATFORM_APP_DIR:$PLATFORM_APP_DIR storage bootstrap/cache
-
-        # Liens symboliques si nécessaire
+        # Correction de la commande chown :
+        chown -R $USER:$GROUP storage bootstrap/cache
         [ ! -e public/storage ] && php artisan storage:link
 
     deploy: |
