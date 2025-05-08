@@ -1,36 +1,30 @@
 name: app_assurance
-
 type: php:8.2
-
-
 
 variables:
     env:
         APP_ENV: "prod"
-        APP_DEBUG: 0
-
+        APP_DEBUG: "0"
 
 relationships:
     database: "mysqldb:mysql"
 
-
-disk: 2048 #2G
+disk: 2048
 
 mounts:
-    "/var/cache": "shared:files/cache"
-    "/var/log": "shared:files/log"
-    "/var/sessions": "shared:files/sessions"
-    "/public": "shared:files/public"
+    "/var/www/html/var/cache": "shared:files/cache"
+    "/var/www/html/var/log": "shared:files/log"
+    "/var/www/html/var/sessions": "shared:files/sessions"
 
 web:
-  locations:
-    "/":
-      root: "public"
-      index: ["index.php"]
-      scripts: true
-      allow: true
-      rules:
-        '\.php$':
-          allow: true
-        '/':
-          try_files: '$uri /index.php$is_args$args'
+    locations:
+        "/":
+            root: "public"
+            index: ["index.php"]
+            passthru: "/index.php"
+            allow: true
+            rules:
+                '\.php$':
+                    allow: true
+                '/':
+                    try_files: '$uri /index.php$is_args$args'
