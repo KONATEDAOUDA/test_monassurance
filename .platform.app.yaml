@@ -1,32 +1,34 @@
-name: app_assurance
 type: php:8.2
 
 variables:
-  env:
-    APP_ENV: dev
-    APP_DEBUG: 0
+    env:
+        APP_ENV: "dev"
+        APP_DEBUG: 1
+
 
 relationships:
-  database: mysqldb:mysql
+    database: "mysqldb:mysql"
 
-disk: 2048
+
+disk: 2048 #2G
 
 mounts:
-  /var/cache:
-    source: local
-    source_path: var/cache
-  /var/log:
-    source: local
-    source_path: var/log
-  /var/sessions:
-    source: local
-    source_path: var/sessions
+    "/var/cache": "shared:files/cache"
+    "/var/log": "shared:files/log"
+    "/var/sessions": "shared:files/sessions"
+    "/public": "shared:files/public"
 
 web:
-  locations:
-    /:
-      root: public
-      passthru: /index.php
-      index:
-        - index.php
-      allow: true
+    locations:
+        "/":
+            # The app's public directory_relative to its root.
+            root: "public"
+            # A front controller to_determine how to handle requests.
+            passthru: "/index.php"
+        # Allow uploaded files to be served, but don't run scripts.
+        # Missing files get sent to the front controller.
+        "/files":
+            root: "web/files"
+            scripts: false
+            allow: true
+            passthru: "/index.php"
