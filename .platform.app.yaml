@@ -31,12 +31,12 @@ hooks:
 
     deploy: |
         set -ex
-        chmod -R 775 storage/framework/views bootstrap/cache
         php artisan config:clear
         php artisan view:clear
         php artisan cache:clear
         php artisan config:cache
         php artisan view:cache
+
 
 web:
   locations:
