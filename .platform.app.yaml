@@ -12,26 +12,48 @@ relationships:
 disk: 2048
 
 mounts:
-    "/var/cache": "shared:files/cache"
-    "/var/log": "shared:files/log"
-    "/var/sessions": "shared:files/sessions"
-    "/storage/app": "shared:files/storage-app"
-    "/storage/framework": "shared:files/storage-framework"
-    "/storage/logs": "shared:files/storage-logs"
+    # Chemins absolus corrigés pointant vers /var/www/html
+    "/var/www/html/storage/framework/cache":
+        source: local
+        source_path: framework_cache
+    "/var/www/html/storage/framework/sessions":
+        source: local
+        source_path: framework_sessions
+    "/var/www/html/storage/framework/views":
+        source: local
+        source_path: framework_views
+    "/var/www/html/storage/app/public":
+        source: local
+        source_path: storage_app
+    "/var/www/html/bootstrap/cache":
+        source: local
+        source_path: bootstrap_cache
 
 hooks:
     build: |
-        set -e
-        mkdir -p storage/framework/{sessions,views,cache}
+        set -ex
+        # Création des dossiers locaux (dev)
+        mkdir -p storage/framework/{cache,sessions,views}
         mkdir -p storage/app/public
         mkdir -p bootstrap/cache
-        chmod -R +w storage bootstrap/cache
+
+        # Permissions
+        chmod -R 775 storage bootstrap/cache
+        chown -R $PLATFORM_APP_DIR:$PLATFORM_APP_DIR storage bootstrap/cache
+
+        # Liens symboliques si nécessaire
+        [ ! -e public/storage ] && php artisan storage:link
+
     deploy: |
-        set -e
+        set -ex
+        # Optimisations Laravel
+        php artisan config:cache
+        php artisan route:cache
+        php artisan view:cache
+
+        # Nettoyage
         php artisan cache:clear
-        mkdir -p storage/framework/{sessions,views,cache}
-        mkdir -p storage/app/public
-        chmod -R +w storage bootstrap/cache
+        php artisan optimize
 
 web:
   locations:
