@@ -11,6 +11,7 @@ relationships:
 
 disk: 2048
 
+
 mounts:
     "/app/storage/framework/views":
         source: local
