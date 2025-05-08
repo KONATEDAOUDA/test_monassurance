@@ -12,15 +12,10 @@ relationships:
 disk: 2048
 
 mounts:
-  /var/cache:
-    source: local
-    source_path: var/cache
-  /var/log:
-    source: local
-    source_path: var/log
-  /var/sessions:
-    source: local
-    source_path: var/sessions
+  "/var/cache": "shared:files/cache"
+  "/var/log": "shared:files/log"
+  "/var/sessions": "shared:files/sessions"
+  # Retirez le montage /public qui cause probablement des problèmes
 
 web:
   locations:
