@@ -390,6 +390,7 @@ class ProductPageController extends Controller
         return view('app.frontend.details-voyage-quote', compact('data', 'prospect', 'comp_gar'))
             ->with('active', 'voyage');
     }
+
     public function traitVoyageQuotation(Request $request)
     {
         $user = $this->saveUserIfNotExist2($request);
@@ -1010,14 +1011,7 @@ class ProductPageController extends Controller
 
         // Calculer le montant selon le type de produit
         if ($prospect->product_type == 3) { // Voyage
-            if (!isset($selectedQuote->PRIME) || !isset($selectedQuote->FG)) {
-                $selectedQuote->PRIME = $selectedQuote->PRIME ?? 0;
-                $selectedQuote->FG = $selectedQuote->FG ?? 2000; // Valeur par défaut réaliste
-
-                throw new \Exception("Les données du devis voyage sont incomplètes.");
-            }
             $totalAmount = $selectedQuote->PRIME + $selectedQuote->FG;
-
         } elseif (in_array($prospect->product_type, [1, 2])) { // Auto ou Moto
             if (!isset($selectedQuote->som_serv) || !isset($selectedQuote->TTC)) {
                 throw new \Exception("Les données du devis auto/moto sont incomplètes.");

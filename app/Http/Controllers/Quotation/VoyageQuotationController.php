@@ -11,8 +11,6 @@ use Carbon\Carbon;
 use App\Models\OptionnalService;
 use App\Models\ReglementaryCoast;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-
 class VoyageQuotationController extends Controller
 {
     public function caculVoyageQuotationFromDb($prospect)
@@ -48,28 +46,17 @@ class VoyageQuotationController extends Controller
 
         $service= $this->format_service($serv_opt);
 
-        $services = array();
-        if (isset($serv_opt) && is_array($serv_opt)) {
+        $services  = array();
+        if(isset($serv_opt)){
             foreach ($serv_opt as $s) {
-                if (!empty($s)) {
-                    $serv = DB::table('optional_service')->where('id', $s)->first();
-
-                    // Check if service exists before accessing properties
-                    if ($serv !== null) {
-                        $services[$s] = [
-                            "id" => $serv->id,
-                            "service" => $serv->service,
-                            "amount" => $serv->amount
-                        ];
-                    } else {
-                        // Optionally log or handle missing service
-                        Log::warning("Optional service not found for ID: " . $s);
-                        continue;
-                    }
+                if($s!=""){
+                    $serv = DB::table('optional_service')->where('id',$s)->first();
+                    $services[$s]["id"] = $serv->id;
+                    $services[$s]["service"] = $serv->service;
+                    $services[$s]["amount"] = $serv->amount;
                 }
             }
         }
-
         $all_quotation = array();
         $date_of_birth = explode('-', $dob);
         $Tab_arrival_date = explode('-', $arrival_date);

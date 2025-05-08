@@ -168,16 +168,16 @@ class DetailsOrderController extends Controller
                 ->join("pays", "pays.pays_id", "assurance_voyage_infos.destination_country")
                 ->select("quotation.id as qid", "assurance_infos_id as assur_voy_id", "user_id", "quotation.status", "product_type", "number_n", "policy_number", "priority", "company_id", "collect_data", "service_opt", "delivery_location", "inbox_amount", "phone_client", "renew_order", "quotation.created_at", "destination_country", "current_addr", "destination_addr", "departure_date", "arrival_date", "nationality_id", "passport_num", "date_expire_passport", "firstname", "lastname", "gender", "dob", "contact", "email", "usertype", "pays.pays_name", "pays.pays_code", "pays.pays_zone")
                 ->where("quotation.id", $id)->first();
-
+    
         if (!$prospect) {
             Session::flash('error', 'Une erreur s\'est produite');
             return redirect()->route('spaceDashboard')->with(['isActive' => 'dashboard']);
         }
-
+    
         // Calcul de la durée correcte
         $duration = Carbon::parse($prospect->departure_date)
                     ->diffInDays(Carbon::parse($prospect->arrival_date));
-
+    
         if ($prospect->collect_data == null) {
             $quotations = json_decode(app('App\Http\Controllers\Quotation\VoyageQuotationController')->caculVoyageQuotationFromDb($prospect));
             DB::table("quotation")->where("id", $id)->update([
@@ -185,7 +185,7 @@ class DetailsOrderController extends Controller
             ]);
         } else {
             $quotations = json_decode($prospect->collect_data);
-
+            
             // Correction de la durée dans les données existantes
             foreach ($quotations as $quote) {
                 if (isset($quote->ASSURANCE)) {
@@ -193,11 +193,11 @@ class DetailsOrderController extends Controller
                 }
             }
         }
-
+    
         $optional_service = DB::table('optional_service')->where(['product_type' => 3])->get();
         $selected_serv = collect($quotations[0]->SERVICES ?? []);
         $revives = DB::table('revive_client_quotation')->where('quotation_id', $id)->get();
-
+    
         $order_status = DB::table('order_status_actor')
                         ->join('quotation', 'quotation.id', 'order_status_actor.order_id')
                         ->join('users', 'users.id', 'order_status_actor.actor_id')
@@ -206,14 +206,14 @@ class DetailsOrderController extends Controller
                         ->groupBy('order_status')
                         ->orderBy('order_status')
                         ->get();
-
+    
         DB::table("quotation")->where("id", $id)->update([
             "view" => 1
         ]);
-
+    
         $companies = DB::table('auto_company')->where(['has_travel' => 1])->get();
         $pays = DB::table('pays')->get();
-
+    
         return view('Backoffice.backend.prospection.details-devis-voyage')->with([
             'isActive' => 'commande',
             'prospect' => $prospect,
@@ -642,23 +642,23 @@ class DetailsOrderController extends Controller
             )
             ->where("quotation.id", $quote_id)
             ->first();
-
+    
         if (!$prospect) {
-            Session::flash('error', "Prospect introuvable pour le devis.");
+            Session::flash('error', "Prospect introuvable pour le devis."); 
             return redirect()->back();
         }
-
+    
         $quotations = $prospect->collect_data ? json_decode($prospect->collect_data) : [];
-
+    
         Log::info('Données collectées :', [
-            'quotations' => $quotations,
+            'quotations' => $quotations, 
             'comp_id' => $comp_id,
             'dates' => [
                 'depart' => $prospect->departure_date,
                 'arrivee' => $prospect->arrival_date
             ]
         ]);
-
+    
         $data = null;
         if ($quotations) {
             foreach ($quotations as $q) {
@@ -668,36 +668,36 @@ class DetailsOrderController extends Controller
                 }
             }
         }
-
+    
         if (!$data) {
             Log::error("Aucune correspondance trouvée pour comp_id : $comp_id");
             Session::flash('error', "Devis introuvable pour cette compagnie.");
            // return redirect()->back();
         }
-
+    
         // Calcul précis de la durée (inclusif)
         $duration = Carbon::parse($prospect->departure_date)
                     ->diffInDays(Carbon::parse($prospect->arrival_date));
-
+    
         // Assure que toutes les propriétés requises existent
         $data->PRIME = $data->PRIME ?? 0;
         $data->FG = $data->FG ?? 0;
         $data->ASSURANCE = $data->ASSURANCE ?? (object)[];
         $data->ASSURANCE->ZONE = $data->ASSURANCE->ZONE ?? $prospect->pays_zone ?? 'INCONNUE';
         $data->ASSURANCE->DUREE = $duration;
-
+    
         $company_quotation = DB::table('auto_companyquotation')
             ->where(['companyid' => $data->idcomp, 'type_assurance' => 3])
             ->orderBy('id', 'desc')
             ->first();
-
+    
         if (!$company_quotation) {
             Session::flash('error', "Informations sur la compagnie introuvables.");
            // return redirect()->back();
         }
-
+    
         $comp_gar = json_decode($company_quotation->formules, true);
-
+    
         // Journalisation pour débogage
         Log::debug('Données envoyées à la vue', [
             'duration' => $duration,
