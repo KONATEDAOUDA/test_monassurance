@@ -1,6 +1,5 @@
 "https://{default}/":
   type: upstream
   upstream: "app:http"
-  passthru: "/index.php"
   cache:
     enabled: false
