@@ -29,27 +29,32 @@ mounts:
         source: local
         source_path: bootstrap_cache
 
+mounts:
+    "/var/www/html/storage/framework/views":
+        source: local
+        source_path: framework_views
+    "/var/www/html/bootstrap/cache":
+        source: local
+        source_path: bootstrap_cache
+
 hooks:
     build: |
         set -ex
         mkdir -p storage/framework/{cache,sessions,views}
-        mkdir -p storage/app/public
         mkdir -p bootstrap/cache
         chmod -R 775 storage bootstrap/cache
-        # Correction de la commande chown :
-        chown -R $USER:$GROUP storage bootstrap/cache
         [ ! -e public/storage ] && php artisan storage:link
 
     deploy: |
         set -ex
-        # Optimisations Laravel
-        php artisan config:cache
-        php artisan route:cache
-        php artisan view:cache
-
-        # Nettoyage
+        # Réapplique les permissions
+        chmod -R 775 storage/framework/views bootstrap/cache
+        # Optimisations
+        php artisan config:clear
+        php artisan view:clear
         php artisan cache:clear
-        php artisan optimize
+        php artisan config:cache
+        php artisan view:cache
 
 web:
   locations:
