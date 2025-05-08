@@ -12,10 +12,26 @@ relationships:
 disk: 2048
 
 mounts:
-  "/var/cache": "shared:files/cache"
-  "/var/log": "shared:files/log"
-  "/var/sessions": "shared:files/sessions"
-  # Retirez le montage /public qui cause probablement des problèmes
+    "/var/cache": "shared:files/cache"
+    "/var/log": "shared:files/log"
+    "/var/sessions": "shared:files/sessions"
+    "/storage/app": "shared:files/storage-app"
+    "/storage/framework": "shared:files/storage-framework"
+    "/storage/logs": "shared:files/storage-logs"
+
+hooks:
+    build: |
+        set -e
+        mkdir -p storage/framework/{sessions,views,cache}
+        mkdir -p storage/app/public
+        mkdir -p bootstrap/cache
+        chmod -R +w storage bootstrap/cache
+    deploy: |
+        set -e
+        php artisan cache:clear
+        mkdir -p storage/framework/{sessions,views,cache}
+        mkdir -p storage/app/public
+        chmod -R +w storage bootstrap/cache
 
 web:
   locations:
