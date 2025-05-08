@@ -2,29 +2,31 @@ name: app_assurance
 type: php:8.2
 
 variables:
-    env:
-        APP_ENV: "prod"
-        APP_DEBUG: "0"
+  env:
+    APP_ENV: prod
+    APP_DEBUG: 0
 
 relationships:
-    database: "mysqldb:mysql"
+  database: mysqldb:mysql
 
 disk: 2048
 
 mounts:
-    "/var/www/html/var/cache": "shared:files/cache"
-    "/var/www/html/var/log": "shared:files/log"
-    "/var/www/html/var/sessions": "shared:files/sessions"
+  /var/cache:
+    source: local
+    source_path: var/cache
+  /var/log:
+    source: local
+    source_path: var/log
+  /var/sessions:
+    source: local
+    source_path: var/sessions
 
 web:
-    locations:
-        "/":
-            root: "public"
-            index: ["index.php"]
-            passthru: "/index.php"
-            allow: true
-            rules:
-                '\.php$':
-                    allow: true
-                '/':
-                    try_files: '$uri /index.php$is_args$args'
+  locations:
+    /:
+      root: public
+      passthru: /index.php
+      index:
+        - index.php
+      allow: true
