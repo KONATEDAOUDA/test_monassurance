@@ -12,13 +12,13 @@ relationships:
 disk: 2048
 
 mounts:
-    "/var/www/html/storage/framework/views":
+    "/app/storage/framework/views":
         source: local
         source_path: framework_views
-    "/var/www/html/bootstrap/cache":
+    "/app/bootstrap/cache":
         source: local
         source_path: bootstrap_cache
-        
+
 hooks:
     build: |
         set -ex
@@ -29,9 +29,7 @@ hooks:
 
     deploy: |
         set -ex
-        # Réapplique les permissions
         chmod -R 775 storage/framework/views bootstrap/cache
-        # Optimisations
         php artisan config:clear
         php artisan view:clear
         php artisan cache:clear
