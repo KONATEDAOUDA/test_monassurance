@@ -1,3 +1,3 @@
 https://{default}/:
   type: upstream
-  upstream: app:http
+  upstream: app_assurance:http # The upstream service name
