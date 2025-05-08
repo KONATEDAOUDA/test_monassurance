@@ -3,7 +3,7 @@ type: php:8.2
 
 variables:
   env:
-    APP_ENV: prod
+    APP_ENV: dev
     APP_DEBUG: 0
 
 relationships:
