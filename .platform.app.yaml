@@ -1,36 +1,32 @@
-name: app_assurance
+# The name of this app. Must be unique within a project.
+name: app
 
-type: php:8.2
+# The runtime the application uses. The 'type' key defines the base container
+# image that will be used to run the application. There is a separate base
+# container image for each primary language for the application,
+# in multiple versions. Check the PHP documentation
+# (https://docs.platform.sh/languages/php.html#supported-versions)
+# to find the supported versions for the 'php' type.
+type: 'php:8.4'
 
-variables:
-  env:
-    APP_ENV: prod
-    APP_DEBUG: 1  # Activez temporairement le débogage
-    TRUSTED_PROXIES: '*'
-    TRUSTED_HOSTS: '^.+$'
-    APP_URL: https://{default}
-
-relationships:
-  database: "mysqldb:mysql"
-
-disk: 2048
-
+# The following block defines a single writable directory, 'web/uploads'
+# The 'source' specifies where the writable mount is. The 'local' source
+# indicates that the mount point will point to a local directory on the
+# application container. The 'source_path' specifies the subdirectory
+# from within the source that the mount should point at.
 mounts:
-  "/var/cache": "shared:files/cache"
-  "/var/log": "shared:files/log"
-  "/var/sessions": "shared:files/sessions"
-  # Retirez le montage /public qui cause probablement des problèmes
+  'web/uploads':
+    source: local
+    source_path: uploads
 
-web:
-  locations:
-    "/":
-      root: "public"
-      passthru: "/index.php"
-      index:
-        - index.php
-      # Ajoutez des règles pour servir les fichiers statiques
-      rules:
-        '\.(jpe?g|png|gif|svgz?|css|js|map|ico|bmp|eot|woff2?|otf|ttf|webp)$':
-          allow: true
-        '^/robots\.txt$':
-          allow: true
+# The size of the persistent disk of the application (in MB).
+disk: 256
+
+# The relationships of the application with services or other applications.
+#
+# The left-hand side is the name of the relationship as it will be exposed
+# to the application in the PLATFORM_RELATIONSHIPS variable. The right-hand
+# side is in the form '<service name>:<endpoint name>'.
+relationships:
+    mariadb: 'mariadb:mysql'
+    mysql: 'mysql:mysql'
