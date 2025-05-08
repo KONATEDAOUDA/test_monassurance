@@ -1,3 +1,5 @@
 "https://{default}/":
   type: upstream
   upstream: "app_assurance:http"
+  cache:
+    enabled: false

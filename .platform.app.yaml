@@ -6,12 +6,9 @@ type: php:8.2
 
 variables:
     env:
-        APP_ENV: "prod"
+        APP_ENV: "dev"
         APP_DEBUG: 0
-    php:
-        memory_limit: "256M"
-        post_max_size: 10M
-        upload_max_filesize: 100M
+
 
 relationships:
     database: "mysqldb:mysql"
@@ -25,19 +22,15 @@ mounts:
     "/var/sessions": "shared:files/sessions"
     "/public": "shared:files/public"
 
-
 web:
-    locations:
-        "/":
-            # The app's public directory_relative to its root.
-            root: "public"
-            # A front controller to_determine how to handle requests.
-            passthru: "/index.php"
-        # Allow uploaded files to be served, but don't run scripts.
-        # Missing files get sent to the front controller.
-        "/files":
-            root: "web/files"
-            scripts: false
-            allow: true
-            passthru: "/index.php"
-
+  locations:
+    "/":
+      root: "public"
+      index: ["index.php"]
+      scripts: true
+      allow: true
+      rules:
+        '\.php$':
+          allow: true
+        '/':
+          try_files: '$uri /index.php$is_args$args'
