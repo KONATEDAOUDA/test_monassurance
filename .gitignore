@@ -1,0 +1,39 @@
+# Laravel vendor & environment files
+/vendor
+/node_modules
+.env
+.env.*.php
+
+# Laravel compiled files & caches
+/storage/*
+/bootstrap/cache/*
+
+# Except for important subfolders and placeholders
+!storage/.gitignore
+!storage/framework
+!storage/framework/cache
+!storage/framework/sessions
+!storage/framework/views
+!storage/logs
+
+!bootstrap/cache/.gitignore
+
+# IDEs and OS-specific files
+.idea
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+*.swp
+*.bak
+*.tmp
+
+# Platform.sh mount points - do not track content
+/storage/framework/views/*
+/bootstrap/cache/*
+
+# Keep placeholders (optional, helps with empty dirs)
+!storage/framework/views/.gitignore
+!bootstrap/cache/.gitignore
+
+# Log files
+*.log
