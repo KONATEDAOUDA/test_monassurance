@@ -20,6 +20,9 @@ mounts:
     "/app/bootstrap/cache":
         source: local
         source_path: bootstrap_cache
+    "/app/storage/logs":
+        source: local
+        source_path: storage_logs
 
 hooks:
     build: |
