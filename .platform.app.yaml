@@ -12,31 +12,13 @@ relationships:
 disk: 2048
 
 mounts:
-    # Chemins absolus corrigés pointant vers /var/www/html
-    "/var/www/html/storage/framework/cache":
-        source: local
-        source_path: framework_cache
-    "/var/www/html/storage/framework/sessions":
-        source: local
-        source_path: framework_sessions
-    "/var/www/html/storage/framework/views":
-        source: local
-        source_path: framework_views
-    "/var/www/html/storage/app/public":
-        source: local
-        source_path: storage_app
-    "/var/www/html/bootstrap/cache":
-        source: local
-        source_path: bootstrap_cache
-
-mounts:
     "/var/www/html/storage/framework/views":
         source: local
         source_path: framework_views
     "/var/www/html/bootstrap/cache":
         source: local
         source_path: bootstrap_cache
-
+        
 hooks:
     build: |
         set -ex
