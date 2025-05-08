@@ -1,8 +1,10 @@
-# Each route describes how an incoming URL is going to be processed by Platform.sh.
+# .platform/routes.yaml
+# Si un utilisateur arrive sur le site en HTTPS, appelez l'application "app"
 "https://www.{default}/":
-    type: upstream
-    upstream: "app:http"
+  type: upstream
+  upstream: "app_assurance:http"
 
+# Si l'utilisateur arrive sur l'application en www, le rediriger vers https://{default}/
 "https://{default}/":
-    type: redirect
-    to: "https://www.{default}/"
+  type: redirect
+  to: "https://www.{default}/"
